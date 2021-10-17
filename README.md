@@ -1,1 +1,1 @@
-# 您好，這是hello-node資料夾裡面，要記得開啟README來看看唷
+# hello-node
