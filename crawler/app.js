@@ -1,7 +1,10 @@
 const axios = require("axios");
-
+const moment = require("moment");
+// const fs = require("fs/promises");
+// let stockCode = "";
 let stockCode = "1101";
-let today = "20211015";
+// let today = "20211015";
+let today = moment().format("YYYYMMDD");
 let format = "json";
 
 
