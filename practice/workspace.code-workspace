@@ -1,0 +1,13 @@
+{
+  "folders": [
+	{
+		"path": "..\\..\\hello-git"
+	},
+	{
+		"path": ".."
+	}
+],
+  "settings": {
+    "liveServer.settings.multiRootWorkspaceName": "hello-node"
+  }
+}
