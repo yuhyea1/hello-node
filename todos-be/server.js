@@ -1,6 +1,39 @@
 const express = require("express");
+const path = require("path");
+require("dotenv").config();
+const mysql = require("mysql");
+const Promise = require("bluebird");
+
+let connection = mysql.createConnection({
+  host: process.env.DB_HOST, // 本機 127.0.0.1
+  port: process.env.DB_PORT, // 埠號 mysql 預設就是 3306
+  user: process.env.DB_USER,
+  password: process.env.DB_PWD,
+  database: process.env.DB_NAME,
+});
+
+// 利用 bluebird 把 connection 的函式都變成 promise
+connection = Promise.promisifyAll(connection);
 
 let app = express(); // application
+app.use(express.static("static"));
+//localhost:3001/about.html
+
+app.get("/api/todos", async (req, res) => {
+  let data = await connection.queryAsync("SELECT * FROM todos");
+  res.json(data);
+});
+
+// app.use(PATH, express.static(檔案夾))
+// express.static(檔案夾名稱) 是內建的中間件
+http: app.use("/static", express.static("static"));
+// http://localhost:3001/static/about.html
+
+// app.set 設定這個 application 的一些變數
+// views: 告訴 app view 的檔案夾是哪一個
+// view engine: 告訴 app 你用哪一種 view engine
+app.set("views", path.join(__dirname, "views"));
+app.set("view engine", "pug");
 
 // app.use 告訴 express 這裡有一個中間件(middleware)
 // middleware 只是一個函式，會有三個參數
@@ -27,9 +60,17 @@ app.use((req, res, next) => {
 // app.Method(Path, Handler)
 // Method: GET, POST, PUT, DELETE, PATCH, ...
 // Handler 是一個函式，會有兩個參數 request, response
+
 app.get("/", (req, res) => {
   console.log("我是首頁");
-  res.send("我是 Express 首頁");
+  // res.send("我是 Express 首頁");
+  // 告訴 express 這個路由要用的樣板檔案是哪一個
+  let data = {
+    name: "ashley",
+    job: "engineer",
+    cities: ["Taipei", "YiLan"],
+  };
+  res.render("index", data);
 });
 
 app.get("/member", (req, res, next) => {
@@ -60,6 +101,11 @@ app.use((req, res, next) => {
 });
 
 // 3001 port
+// app.listen(3001, () => {
+//   console.log("express app 啟動了喔");
+// });
+
 app.listen(3001, () => {
+  connection.connect();
   console.log("express app 啟動了喔");
 });
